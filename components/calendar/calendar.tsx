@@ -1,20 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, JSX } from 'react';
 import styled from 'styled-components';
 
+type Task = string;
+type Tasks = Record<string, Task[]>;
+
+interface Holiday {
+  date: string;
+  name: string;
+}
+
 export default function Calendar() {
-  const [tasks, setTasks] = useState<any>({});
-  const [currentMonth, setCurrentMonth] = useState(0);
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [holidays, setHolidays] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Tasks>({});
+  const [currentMonth, setCurrentMonth] = useState<number>(0);
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+  const [holidays, setHolidays] = useState<Holiday[]>([]);
 
   const year = currentYear;
 
   useEffect(() => {
     fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/UA`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: Holiday[]) => {
         setHolidays(
           data.map((holiday) => {
             const date = new Date(holiday.date);
@@ -34,10 +42,10 @@ export default function Calendar() {
   const getDaysInMonth = (month: number) => new Date(year, month + 1, 0).getDate();
   const getFirstDayOfMonth = (month: number) => new Date(year, month, 1).getDay();
 
-  const handleTaskAdd = (date: any) => {
+  const handleTaskAdd = (date: string) => {
     const task = prompt('Enter task:');
     if (task) {
-      setTasks((prevTasks: any) => ({
+      setTasks((prevTasks: Tasks) => ({
         ...prevTasks,
         [date]: [...(prevTasks[date] || []), task],
       }));
@@ -50,17 +58,17 @@ export default function Calendar() {
     const previousMonthDays = getDaysInMonth(month - 1);
     const totalCells = firstDay + daysInMonth <= 35 ? 35 : 42;
 
-    const daysArray = [];
+    const daysArray: JSX.Element[] = [];
 
     const currentMonthHolidays = holidays.filter((holiday) => {
-      const [year, m, day] = holiday.date.split('-');
+      const [year, m] = holiday.date.split('-');
       return parseInt(m) === month + 1 && parseInt(year) === currentYear;
     });
 
     for (let i = 0; i < totalCells; i += 1) {
       const isPrevMonth = i < firstDay;
       const isNextMonth = i >= firstDay + daysInMonth;
-      let day =
+      const day =
         i < firstDay
           ? previousMonthDays - firstDay + i + 1
           : i < firstDay + daysInMonth
@@ -202,13 +210,6 @@ const CalendarDay = styled.div`
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 5px;
-`;
-
-const Holiday = styled.div`
-  font-size: 12px;
-  color: red;
-  font-weight: 600;
-  margin-top: 5px;
 `;
 
 const Tasks = styled.div`
