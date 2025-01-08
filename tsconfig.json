@@ -29,10 +29,10 @@
     ".next/types/**/*.ts",
     "models/Task.js",
     "components/taskList.js",
-    "lib/mongodb.js",
+    "lib/mongodb.ts",
     "app/api/.jste.js",
-    "app/api/tasks/route.js",
-    "models/taskModel.js"
+    "app/api/tasks/route.ts",
+    "models/taskModel.ts"
   ],
   "exclude": ["node_modules"]
 }
