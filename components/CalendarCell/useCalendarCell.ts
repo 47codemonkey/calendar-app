@@ -2,7 +2,6 @@ import { Task, Tasks, TaskToEdit } from '@/types/index';
 
 type useCalendarCellProps = {
   formattedDate: string;
-
   setTasks: React.Dispatch<React.SetStateAction<Tasks>>;
   setSelectedDate: React.Dispatch<React.SetStateAction<string | null>>;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,6 +45,11 @@ export default function useCalendarCell({
 
     const { date, task } = JSON.parse(e.dataTransfer.getData('text/plain'));
 
+    const cellHeight = e.currentTarget.clientHeight;
+    const mouseY = e.clientY - e.currentTarget.getBoundingClientRect().top;
+
+    const position = mouseY < cellHeight / 3 ? 'top' : mouseY > (2 * cellHeight) / 3 ? 'bottom' : 'center';
+
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
 
@@ -60,8 +64,17 @@ export default function useCalendarCell({
         updatedTasks[targetDate] = [];
       }
 
-      if (!updatedTasks[targetDate].some((t) => t._id === task._id)) {
+      if (updatedTasks[targetDate].some((t) => t._id === task._id)) {
+        return updatedTasks;
+      }
+
+      if (position === 'top') {
+        updatedTasks[targetDate].unshift({ ...task, date: targetDate });
+      } else if (position === 'bottom') {
         updatedTasks[targetDate].push({ ...task, date: targetDate });
+      } else {
+        const index = Math.floor(updatedTasks[targetDate].length / 2);
+        updatedTasks[targetDate].splice(index, 0, { ...task, date: targetDate });
       }
 
       return updatedTasks;

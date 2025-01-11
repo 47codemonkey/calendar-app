@@ -45,6 +45,11 @@ export default function useModal({
   }
 
   async function editTask(id: string, updatedMsg: string) {
+    if (updatedMsg.trim() === '') {
+      deleteTask(id);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/tasks?id=${id}`, {
         method: 'PUT',

@@ -1,7 +1,5 @@
 import useCalendarCell from '@/components/CalendarCell/useCalendarCell';
-
 import { Task, Tasks, Holiday, TaskToEdit } from '@/types/index';
-
 import styled from 'styled-components';
 
 type CalendarCellProps = {
@@ -46,6 +44,9 @@ export default function CalendarCell({
     formattedDate,
   });
 
+  const filteredTasks = tasks.filter((task) => task.msg.toLowerCase().includes(searchTerm.toLowerCase()));
+  const taskCount = filteredTasks.length;
+
   return (
     <StyledCalendarCell
       $isPrevMonth={isPrevMonth}
@@ -56,64 +57,88 @@ export default function CalendarCell({
       onDrop={isActiveDay ? (e) => handleDrop(e, formattedDate) : undefined}
       style={{ cursor: isActiveDay ? 'pointer' : 'not-allowed' }}
     >
-      <StyledCalendarDay $isCurrentDay={isCurrentDay}>{day}</StyledCalendarDay>
+      <StyledCalendarDayContainer>
+        <StyledCalendarDay $isCurrentDay={isCurrentDay}>{day}</StyledCalendarDay>
+        {taskCount > 0 && (
+          <StyledTaskCount>
+            {taskCount} {taskCount > 1 ? 'cards' : 'card'}
+          </StyledTaskCount>
+        )}
+      </StyledCalendarDayContainer>
       {!isPrevMonth && !isNextMonth && (
-        <>
-          {holiday && <StyledTasks>{holiday.name}</StyledTasks>}
-          {tasks
-            .filter((task) => task.msg.toLowerCase().includes(searchTerm.toLowerCase()))
-            .map((task, idx) => (
-              <StyledTaskCard
-                key={idx}
-                draggable={isActiveDay}
-                onDragStart={(e) => isActiveDay && handleDragStart(e, task)}
-                onClick={(e) => isActiveDay && handleTaskCardClick(e, task, idx)}
-              >
-                {task.msg}
-              </StyledTaskCard>
-            ))}
-        </>
+        <StyledTaskCardContainer>
+          {holiday && <StyledHoliday>{holiday.name}</StyledHoliday>}
+          {filteredTasks.map((task, idx) => (
+            <StyledTaskCard
+              key={idx}
+              draggable={isActiveDay}
+              onDragStart={(e) => isActiveDay && handleDragStart(e, task)}
+              onClick={(e) => isActiveDay && handleTaskCardClick(e, task, idx)}
+            >
+              {task.msg}
+            </StyledTaskCard>
+          ))}
+        </StyledTaskCardContainer>
       )}
     </StyledCalendarCell>
   );
 }
 
+const StyledCalendarDayContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledTaskCount = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: grey;
+`;
+
 const StyledCalendarCell = styled.div<{ $isPrevMonth?: boolean; $isNextMonth?: boolean; $isCurrentDay: boolean }>`
-  background-color: ${({ $isPrevMonth, $isNextMonth }) => ($isPrevMonth || $isNextMonth ? '#ddd' : 'white')};
+  background-color: ${({ $isPrevMonth, $isNextMonth }) => ($isPrevMonth || $isNextMonth ? '#f9f9f9' : 'white')};
   border-radius: 10px;
   padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 5px;
   justify-content: flex-start;
-  border: ${({ $isCurrentDay }) => ($isCurrentDay ? '2px solid red' : 'none')};
+  border: ${({ $isPrevMonth, $isNextMonth, $isCurrentDay }) =>
+    $isPrevMonth || $isNextMonth ? 'none' : $isCurrentDay ? '2px solid red' : '1px solid #222222'};
 `;
 
 const StyledCalendarDay = styled.div<{ $isCurrentDay: boolean }>`
   font-size: 18px;
   font-weight: 600;
   color: ${({ $isCurrentDay }) => ($isCurrentDay ? 'red' : '#333')};
-  margin-bottom: 10px;
 `;
 
-const StyledTasks = styled.div`
-  font-size: 14px;
-  font-weight: 400;
-  color: #333;
-  background-color: #eef;
+const StyledHoliday = styled.div`
+  font-size: 12px;
+  font-weight: 600;
   padding: 5px;
   border-radius: 5px;
-  margin-top: 5px;
   text-align: center;
 `;
 
 const StyledTaskCard = styled.div`
-  background-color: #4caf50;
-  color: white;
   padding: 5px 10px;
   border-radius: 5px;
-  margin-top: 5px;
   cursor: pointer;
-  text-align: center;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  border: 1px solid transparent;
+  background-color: rgb(221, 221, 221);
+`;
+
+const StyledTaskCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 130px;
+  padding-right: 5px;
 `;
