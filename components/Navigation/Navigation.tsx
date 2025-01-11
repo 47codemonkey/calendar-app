@@ -66,7 +66,7 @@ const StyledNavigation = styled.div`
 
 const StyledNavigationButtons = styled.button`
   background-color: rgb(255, 255, 255);
-  border: 1px solidrgb(34, 34, 34);
+  border: 1px solid rgb(34, 34, 34);
   border-radius: 8px;
   box-sizing: border-box;
   color: rgb(34, 34, 34);
