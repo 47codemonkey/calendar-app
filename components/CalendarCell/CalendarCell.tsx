@@ -138,7 +138,4 @@ const StyledTaskCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow-y: auto;
-  max-height: 130px;
-  padding-right: 5px;
 `;
