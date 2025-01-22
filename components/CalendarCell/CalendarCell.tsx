@@ -107,13 +107,13 @@ const StyledCalendarCell = styled.div<{ $isPrevMonth?: boolean; $isNextMonth?: b
   gap: 5px;
   justify-content: flex-start;
   border: ${({ $isPrevMonth, $isNextMonth, $isCurrentDay }) =>
-    $isPrevMonth || $isNextMonth ? 'none' : $isCurrentDay ? '2px solid red' : '1px solid #222222'};
+    $isPrevMonth || $isNextMonth ? 'none' : $isCurrentDay ? '2px solid #FF0000' : '1px solid #222222'};
 `;
 
 const StyledCalendarDay = styled.div<{ $isCurrentDay: boolean }>`
   font-size: 18px;
   font-weight: 600;
-  color: ${({ $isCurrentDay }) => ($isCurrentDay ? 'red' : '#333')};
+  color: ${({ $isCurrentDay }) => ($isCurrentDay ? '#FF0000' : '#333')};
 `;
 
 const StyledHoliday = styled.div`
