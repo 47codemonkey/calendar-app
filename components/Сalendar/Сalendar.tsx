@@ -122,7 +122,7 @@ export default function Calendar() {
 }
 
 const StyledErrorMessage = styled.div`
-  color: red;
+  color: #ff0000;
   font-size: 14px;
   background-color: #f8d7da;
   border: 1px solid #f5c6cb;
